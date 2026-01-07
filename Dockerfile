@@ -77,11 +77,11 @@ RUN git clone --depth 1 --branch ${OPENWRT_VERSION_GIT_REF} https://github.com/o
     && make package/symlinks
 
 RUN cd /home/me/openwrt \
-    && ./scripts/feeds update -a
+    && ./scripts/feeds update -a \
     && ./scripts/feeds install -a \
     && cp -v configs/$ROUTER_CONFIG.config .config \
     && make defconfig \
-		&& make -j$(nproc) tools/install
+		&& make -j$(nproc) tools/install \
 		&& make -j$(nproc) toolchain/install
 
 ENTRYPOINT /bin/bash
