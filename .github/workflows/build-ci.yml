@@ -1,0 +1,32 @@
+name: Build and Publish OpenWRT Builder docker Image
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        openwrt_version_git_ref:
+          - openwrt-24.10
+        router:
+          - glinet-mt6000
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build OpenWRT
+        run: |
+          docker build --build-arg OPENWRT_VERSION_GIT_REF="${{ matrix.openwrt_version_git_ref }}" --build-arg ROUTER_CONFIG="${{ matrix.router }}" -t "ghcr.io/${{ github.repository_owner }}/openwrt-builder:${{ matrix.openwrt_version_git_ref }}-${{ matrix.router }}" .
+
+      - name: Login to GitHub Packages
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Push Docker Image
+        run: |
+          docker push "ghcr.io/${{ github.repository_owner }}/openwrt-builder:${{ matrix.openwrt_version_git_ref }}-${{ matrix.router }}" 
