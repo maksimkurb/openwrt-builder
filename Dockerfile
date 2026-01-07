@@ -53,12 +53,6 @@ RUN \
   apt-get clean && \
   localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
-RUN pip3 install --break-system-packages -U pip
-RUN pip3 install --break-system-packages \
-	pyelftools \
-	pyOpenSSL \
-	service_identity
-
 ENV LANG=en_US.utf8
 
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
