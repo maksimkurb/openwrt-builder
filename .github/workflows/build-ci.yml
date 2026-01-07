@@ -8,24 +8,18 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
-    inputs:
-      openwrt_version_git_ref:
-        description: 'OpenWRT version/branch (comma-separated, e.g., master,openwrt-24.10)'
-        required: false
-        default: 'openwrt-24.10'
-      router:
-        description: 'Router config (comma-separated, e.g., glinet-mt6000)'
-        required: false
-        default: 'glinet-mt6000'
+  workflow_dispatch: {}
 
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        openwrt_version_git_ref: ${{ fromJSON(format('[%s]', format('"{0}"', join(split((github.event.inputs.openwrt_version_git_ref || 'openwrt-24.10,openwrt-25.12'), ','), '","')))) }}
-        router: ${{ fromJSON(format('[%s]', format('"{0}"', join(split((github.event.inputs.router || 'glinet-mt6000'), ','), '","')))) }}
+        openwrt_version_git_ref:
+          - openwrt-24.10
+          - openwrt-25.12
+        router:
+          - glinet-mt6000
 
     steps:
       - name: Checkout Repository
