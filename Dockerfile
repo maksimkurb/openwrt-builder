@@ -9,9 +9,12 @@ RUN \
   apt-get update && \
   apt-get install -y \
 	asciidoc \
+	bison \
 	build-essential \
 	ccache \
+	clang \
 	curl \
+	file \
 	flex \
 	gawk \
 	g++-multilib \
@@ -37,7 +40,6 @@ RUN \
 	python-is-python3 \
 	python3 \
 	python3-dev \
-	python3-distutils \
 	python3-setuptools \
 	qemu-utils \
 	rsync \
