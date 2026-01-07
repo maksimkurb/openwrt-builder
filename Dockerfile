@@ -37,8 +37,8 @@ RUN \
 	python-is-python3 \
 	python3 \
 	python3-dev \
-	python3-pip \
-	python3-venv \
+	python3-distutils \
+	python3-setuptools \
 	qemu-utils \
 	rsync \
 	signify-openbsd \
@@ -53,17 +53,6 @@ RUN \
 	zstd && \
   apt-get clean && \
   localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
-
-RUN python3 -m venv /opt/venv
-
-ENV PATH="/opt/venv/bin:$PATH" \
-	VIRTUAL_ENV="/opt/venv"
-
-RUN pip install -U pip setuptools && \
-	pip install \
-		pyelftools \
-		pyOpenSSL \
-		service_identity
 
 ENV LANG=en_US.utf8
 
