@@ -1,8 +1,8 @@
 name: Build and Publish OpenWRT Builder docker Image
 
-env:
-  DEFAULT_OPENWRT_VERSION: 'openwrt-24.10,openwrt-25.12'
-  DEFAULT_ROUTER_CONFIG: 'glinet-mt6000'
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
 
 on:
   push:
@@ -24,8 +24,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        openwrt_version_git_ref: ${{ fromJSON(format('[%s]', format('"{0}"', join(split((github.event.inputs.openwrt_version_git_ref || env.DEFAULT_OPENWRT_VERSION), ','), '","')))) }}
-        router: ${{ fromJSON(format('[%s]', format('"{0}"', join(split((github.event.inputs.router || env.DEFAULT_ROUTER_CONFIG), ','), '","')))) }}
+        openwrt_version_git_ref: ${{ fromJSON(format('[%s]', format('"{0}"', join(split((github.event.inputs.openwrt_version_git_ref || 'openwrt-24.10,openwrt-25.12'), ','), '","')))) }}
+        router: ${{ fromJSON(format('[%s]', format('"{0}"', join(split((github.event.inputs.router || 'glinet-mt6000'), ','), '","')))) }}
 
     steps:
       - name: Checkout Repository
