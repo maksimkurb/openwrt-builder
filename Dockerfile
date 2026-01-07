@@ -34,7 +34,7 @@ RUN \
 	perl-modules \
 	pv \
 	pwgen \
-	python \
+	python-is-python3 \
 	python3 \
 	python3-dev \
 	python3-pip \
