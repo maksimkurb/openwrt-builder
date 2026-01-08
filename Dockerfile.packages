@@ -7,10 +7,4 @@ FROM ghcr.io/${REPO_OWNER}/openwrt-builder:${OPENWRT_VERSION_GIT_REF}-${ROUTER_C
 # Copy packages folder
 COPY --chown=me:me packages /home/me/openwrt/owrt-packages
 
-RUN cp /home/me/openwrt/router.config /home/me/openwrt/.config && \
-    cat /home/me/openwrt/owrt-packages/packages.config >> /home/me/openwrt/.config && \
-    cat /home/me/openwrt/owrt-packages/packages.feed >> /home/me/openwrt/feeds.conf.default && \
-    ./scripts/feeds update custom && \
-    ./scripts/feeds install -a -p custom && \
-    make defconfig && \
-    ./owrt-packages/compile.sh
+RUN ./owrt-packages/compile.sh
