@@ -68,12 +68,22 @@ jobs:
           path: ./bin/**/*.ipk
           if-no-files-found: ignore
 
+      - name: Rename packages with version suffix
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          mkdir -p release_files
+          for file in ./bin/**/*.ipk; do
+            filename=$(basename "$file")
+            newname="${filename%.ipk}-${{ matrix.openwrt_version_git_ref }}-${{ matrix.router }}.ipk"
+            cp "$file" "release_files/$newname"
+          done
+
       - name: Create GitHub Release with packages
         uses: softprops/action-gh-release@v2
         if: github.event_name == 'workflow_dispatch'
         with:
           draft: true
-          files: ./bin/**/*.ipk
+          files: release_files/*.ipk
           tag_name: ${{ needs.create-tag.outputs.tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
