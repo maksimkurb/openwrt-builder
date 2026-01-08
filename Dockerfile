@@ -56,16 +56,16 @@ RUN \
   apt-get clean && \
   localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
-ENV LANG en_US.utf8
+ENV LANG=en_US.utf8
 
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 RUN useradd -c "OpenWrt Builder" -m -d /home/me -G sudo -s /bin/bash me
 
-ARG OPENWRT_VERSION_GIT_REF openwrt-24.10
-ARG ROUTER_CONFIG glinet-mt6000
+ARG OPENWRT_VERSION_GIT_REF=openwrt-24.10
+ARG ROUTER_CONFIG=glinet-mt6000
 
 USER me
-ENV HOME /home/me
+ENV HOME=/home/me
 
 # Clone and build OpenWrt
 RUN git clone --depth 1 --branch ${OPENWRT_VERSION_GIT_REF} https://github.com/openwrt/openwrt.git /home/me/openwrt \
