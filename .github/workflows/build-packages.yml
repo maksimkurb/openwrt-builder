@@ -11,6 +11,23 @@ on:
   workflow_dispatch: {}
 
 jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Create and push tag
+        run: |
+          TAG="openwrt-packages-$(date +%Y%m%d-%H%M%S)"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "$TAG"
+          git push origin "$TAG" -o ci.skip
+
   build-and-publish:
     runs-on: ubuntu-latest
     permissions:
