@@ -72,7 +72,7 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         run: |
           mkdir -p release_files
-          for file in ./bin/**/*.ipk; do
+          find ./bin -name "*.ipk" -type f | while read file; do
             filename=$(basename "$file")
             newname="${filename%.ipk}-${{ matrix.openwrt_version_git_ref }}-${{ matrix.router }}.ipk"
             cp "$file" "release_files/$newname"
