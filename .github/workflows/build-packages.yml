@@ -46,8 +46,8 @@ jobs:
           if-no-files-found: ignore
 
       - name: Create GitHub Release with packages
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'
         with:
           draft: true
           files: ./bin/**/*.ipk
