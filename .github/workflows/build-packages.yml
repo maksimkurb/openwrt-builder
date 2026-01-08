@@ -30,7 +30,7 @@ jobs:
 
       - name: Build packages
         run: |
-          docker build --build-arg REPO_OWNER="${{ github.repository_owner }}" --build-arg OPENWRT_VERSION_GIT_REF="${{ matrix.openwrt_version_git_ref }}" --build-arg ROUTER_CONFIG="${{ matrix.router }}" -t "ghcr.io/${{ github.repository_owner }}/openwrt-packages:${{ matrix.openwrt_version_git_ref }}-${{ matrix.router }}" .
+          docker build -f Dockerfile.packages --build-arg REPO_OWNER="${{ github.repository_owner }}" --build-arg OPENWRT_VERSION_GIT_REF="${{ matrix.openwrt_version_git_ref }}" --build-arg ROUTER_CONFIG="${{ matrix.router }}" -t "ghcr.io/${{ github.repository_owner }}/openwrt-packages:${{ matrix.openwrt_version_git_ref }}-${{ matrix.router }}" .
 
       - name: Copy packages from docker image
         run: |

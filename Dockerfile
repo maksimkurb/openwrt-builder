@@ -1,7 +1,7 @@
 # https://github.com/openwrt/buildbot/blob/master/docker/buildworker/Dockerfile
 
-FROM	debian:13
-MAINTAINER	Maxim Kurbatov
+FROM debian:13
+LABEL maintainer="Maxim Kurbatov"
 
 ARG	DEBIAN_FRONTEND=noninteractive
 
@@ -56,25 +56,26 @@ RUN \
   apt-get clean && \
   localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
-ENV LANG=en_US.utf8
+ENV LANG en_US.utf8
 
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 RUN useradd -c "OpenWrt Builder" -m -d /home/me -G sudo -s /bin/bash me
 
-ARG OPENWRT_VERSION_GIT_REF=openwrt-24.10
-ARG ROUTER_CONFIG=glinet-mt6000
+ARG OPENWRT_VERSION_GIT_REF openwrt-24.10
+ARG ROUTER_CONFIG glinet-mt6000
 
 USER me
-WORKDIR /home/me/openwrt
 ENV HOME /home/me
-
-# Copy router config
-COPY configs/${ROUTER_CONFIG}.config /home/me/openwrt/.config
 
 # Clone and build OpenWrt
 RUN git clone --depth 1 --branch ${OPENWRT_VERSION_GIT_REF} https://github.com/openwrt/openwrt.git /home/me/openwrt \
     && cd /home/me/openwrt \
     && make package/symlinks
+
+# Copy router config
+COPY configs/${ROUTER_CONFIG}.config /home/me/openwrt/.config
+
+WORKDIR /home/me/openwrt
 
 RUN cd /home/me/openwrt \
     && ./scripts/feeds update -a \
@@ -83,4 +84,4 @@ RUN cd /home/me/openwrt \
 		&& make -j$(nproc) tools/install \
 		&& make -j$(nproc) toolchain/install
 
-ENTRYPOINT /bin/bash
+ENTRYPOINT ["/bin/bash"]
