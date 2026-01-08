@@ -73,7 +73,7 @@ RUN git clone --depth 1 --branch ${OPENWRT_VERSION_GIT_REF} https://github.com/o
     && make package/symlinks
 
 # Copy router config
-COPY --chown me:me configs/${ROUTER_CONFIG}.config /home/me/openwrt/router.config
+COPY --chown=me:me configs/${ROUTER_CONFIG}.config /home/me/openwrt/router.config
 
 WORKDIR /home/me/openwrt
 

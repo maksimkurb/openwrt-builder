@@ -5,7 +5,7 @@ ARG REPO_OWNER maksimkurb
 FROM ghcr.io/${REPO_OWNER}/openwrt-builder:${OPENWRT_VERSION_GIT_REF}-${ROUTER_CONFIG}
 
 # Copy packages folder
-COPY --chown me:me packages /root/openwrt/owrt-packages
+COPY --chown=me:me packages /root/openwrt/owrt-packages
 
 RUN cp /root/openwrt/router.config /root/openwrt/.config && \
     cat /root/openwrt/owrt-packages/packages.config >> /root/openwrt/.config && \
