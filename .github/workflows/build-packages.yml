@@ -1,0 +1,55 @@
+name: Build and Publish OpenWRT packages
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  push:
+    tags:
+      - openwrt-packages-*
+  workflow_dispatch: {}
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: write
+    strategy:
+      matrix:
+        openwrt_version_git_ref:
+          - openwrt-24.10
+          - openwrt-25.12
+        router:
+          - glinet-mt6000
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build packages
+        run: |
+          docker build --build-arg REPO_OWNER="${{ github.repository_owner }}" --build-arg OPENWRT_VERSION_GIT_REF="${{ matrix.openwrt_version_git_ref }}" --build-arg ROUTER_CONFIG="${{ matrix.router }}" -t "ghcr.io/${{ github.repository_owner }}/openwrt-packages:${{ matrix.openwrt_version_git_ref }}-${{ matrix.router }}" .
+
+      - name: Copy packages from docker image
+        run: |
+          docker create --name temp-container "ghcr.io/${{ github.repository_owner }}/openwrt-packages:${{ matrix.openwrt_version_git_ref }}-${{ matrix.router }}"
+          docker cp temp-container:/home/builder/openwrt/bin ./bin
+          docker rm temp-container
+
+      - name: Find and upload .ipk packages as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ipk-packages-${{ matrix.openwrt_version_git_ref }}-${{ matrix.router }}
+          path: ./bin/**/*.ipk
+          if-no-files-found: ignore
+
+      - name: Create GitHub Release with packages
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          draft: true
+          files: ./bin/**/*.ipk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

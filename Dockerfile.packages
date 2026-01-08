@@ -1,0 +1,24 @@
+ARG OPENWRT_VERSION_GIT_REF=openwrt-24.10
+ARG ROUTER_CONFIG=glinet-mt6000
+ARG REPO_OWNER=maksimkurb
+
+FROM ghcr.io/${REPO_OWNER}/openwrt-builder:${OPENWRT_VERSION_GIT_REF}-${ROUTER_CONFIG}
+
+# Copy router config
+COPY configs/${ROUTER_CONFIG}.config /home/me/openwrt/.config
+
+# Copy packages config
+COPY packages/packages.config /home/me/openwrt/packages.config
+
+# Copy packages feeds
+COPY packages/packages.feed /home/me/openwrt/packages.feed
+
+# Copy packages
+COPY packages /home/me/openwrt/owrt-packages
+
+RUN cat /home/me/openwrt/owrt-packages/packages.config >> /home/me/openwrt/.config && \
+    cat /home/me/openwrt/owrt-packages/packages.feed >> /home/me/openwrt/feeds.conf.default && \
+    ./scripts/feeds update custom && \
+    ./scripts/feeds install -a -p custom && \
+    make defconfig && \
+    make -j$(nproc) V=s package/compile
