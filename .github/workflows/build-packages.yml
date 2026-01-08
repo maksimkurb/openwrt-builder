@@ -35,7 +35,7 @@ jobs:
       - name: Copy packages from docker image
         run: |
           docker create --name temp-container "ghcr.io/${{ github.repository_owner }}/openwrt-packages:${{ matrix.openwrt_version_git_ref }}-${{ matrix.router }}"
-          docker cp temp-container:/home/builder/openwrt/bin ./bin
+          docker cp temp-container:/home/me/openwrt/bin ./bin
           docker rm temp-container
 
       - name: Find and upload .ipk packages as artifacts
