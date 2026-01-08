@@ -4,6 +4,8 @@ ARG REPO_OWNER maksimkurb
 
 FROM ghcr.io/${REPO_OWNER}/openwrt-builder:${OPENWRT_VERSION_GIT_REF}-${ROUTER_CONFIG}
 
+ARG ROUTER_CONFIG glinet-mt6000
+
 # Copy router config
 COPY configs/${ROUTER_CONFIG}.config /home/me/openwrt/.config
 
