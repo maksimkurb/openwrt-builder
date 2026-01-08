@@ -58,20 +58,27 @@ RUN \
 
 ENV LANG en_US.utf8
 
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+RUN useradd -c "OpenWrt Builder" -m -d /home/me -G sudo -s /bin/bash me
+
 ARG OPENWRT_VERSION_GIT_REF openwrt-24.10
 ARG ROUTER_CONFIG glinet-mt6000
 
+USER me
+ENV HOME /home/me
+
 # Clone and build OpenWrt
-RUN git clone --depth 1 --branch ${OPENWRT_VERSION_GIT_REF} https://github.com/openwrt/openwrt.git /root/openwrt \
-    && cd /root/openwrt \
+RUN git clone --depth 1 --branch ${OPENWRT_VERSION_GIT_REF} https://github.com/openwrt/openwrt.git /home/me/openwrt \
+    && cd /home/me/openwrt \
     && make package/symlinks
 
 # Copy router config
-COPY configs/${ROUTER_CONFIG}.config /root/openwrt/.config
+COPY --chown me:me configs/${ROUTER_CONFIG}.config /home/me/openwrt/router.config
 
-WORKDIR /root/openwrt
+WORKDIR /home/me/openwrt
 
-RUN cd /root/openwrt \
+RUN cd /home/me/openwrt \
+		&& cp ./router.config ./.config \
     && ./scripts/feeds update -a \
     && ./scripts/feeds install -a \
     && make defconfig \
