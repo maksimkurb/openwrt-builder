@@ -13,4 +13,4 @@ RUN cp /home/me/openwrt/router.config /home/me/openwrt/.config && \
     ./scripts/feeds update custom && \
     ./scripts/feeds install -a -p custom && \
     make defconfig && \
-    make -j$(nproc) V=s package/compile
+    ./owrt-packages/compile.sh
