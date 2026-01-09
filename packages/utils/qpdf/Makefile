@@ -8,22 +8,25 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=qpdf
-PKG_VERSION:=4.0.1
+PKG_VERSION:=11.2.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=@SF/$(PKG_NAME)
-PKG_MD5SUM:=093baece867a0a7e07774bd4008156b3
+PKG_MD5SUM:=8fa1fc5d8b99e41c4f9d0760d6733756
+
+PKG_BUILD_DEPENDS := libjpeg-turbo
 
 PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/cmake.mk
 
 define Package/qpdf
   SECTION:=utils
   CATEGORY:=Utilities
   TITLE:=QPDF is a command-line program for transformations on PDF files.
-  DEPENDS:= +libpcre +zlib +libstdcpp
+  DEPENDS:= +libpcre2 +libjpeg-turbo +zlib +libstdcpp
   URL:=http://qpdf.sourceforge.net/
   SUBMENU:=Printing
 endef
@@ -42,9 +45,13 @@ define Package/qpdf/install
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/* $(1)/usr/lib/
 endef
 
-define Build/Compile
-	$(call Build/Compile/Default, LIBTOOL="./libtool --tag=CXX")
-endef
+CMAKE_BINARY_SUBDIR:=build
+
+CMAKE_OPTIONS += \
+	-DCMAKE_BUILD_TYPE=Release \
+	-DENABLE_QDF=ON \
+	-DSKIP_OS_SECURE_RANDOM=ON \
+	-DUSE_INSECURE_RANDOM=ON
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/bin $(1)/usr/lib
