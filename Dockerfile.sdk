@@ -72,12 +72,9 @@ RUN cd /home/me && \
     curl -LO https://downloads.openwrt.org/releases/${OPENWRT_VERSION}/targets/mediatek/filogic/openwrt-sdk-${OPENWRT_VERSION}-${OPENWRT_ARCH}.tar.zst && \
     tar --use-compress-program=unzstd -xvf openwrt-sdk-${OPENWRT_VERSION}-${OPENWRT_ARCH}.tar.zst && \
     mv openwrt-sdk-${OPENWRT_VERSION}-${OPENWRT_ARCH} openwrt && \
-    rm openwrt-sdk-${OPENWRT_VERSION}-${OPENWRT_ARCH}.tar.zst && \
-    cd /home/me/openwrt && \
-    make package/symlinks
-
-# Copy router config
-# COPY --chown=me:me configs/${ROUTER_CONFIG}.config /home/me/openwrt/router.config
+    rm openwrt-sdk-${OPENWRT_VERSION}-${OPENWRT_ARCH}.tar.zst
+# cd /home/me/openwrt && \
+# make package/symlinks
 
 WORKDIR /home/me/openwrt
 

@@ -41,11 +41,10 @@ jobs:
       contents: write
     strategy:
       matrix:
-        openwrt_version_git_ref:
-          - openwrt-24.10
-          - openwrt-25.12
-        router:
-          - glinet-mt6000
+        openwrt_version:
+          - "24.10.4"
+        openwrt_arch:
+          - "mediatek-filogic_gcc-13.3.0_musl.Linux-x86_64"
 
     steps:
       - name: Checkout Repository
@@ -53,7 +52,7 @@ jobs:
 
       - name: Build packages
         run: |
-          docker build -f Dockerfile.packages --build-arg REPO_OWNER="${{ github.repository_owner }}" --build-arg OPENWRT_VERSION_GIT_REF="${{ matrix.openwrt_version_git_ref }}" --build-arg ROUTER_CONFIG="${{ matrix.router }}" -t "ghcr.io/${{ github.repository_owner }}/openwrt-packages:${{ matrix.openwrt_version_git_ref }}-${{ matrix.router }}" .
+          docker build -f Dockerfile.packages --build-arg REPO_OWNER="${{ github.repository_owner }}" --build-arg OPENWRT_VERSION="${{ matrix.openwrt_version }}" --build-arg OPENWRT_ARCH="${{ matrix.openwrt_arch }}" -t "ghcr.io/${{ github.repository_owner }}/openwrt-sdk:${{ matrix.openwrt_version }}-${{ matrix.openwrt_arch }}" .
 
       - name: Copy packages from docker image
         run: |

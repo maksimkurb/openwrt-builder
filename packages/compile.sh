@@ -2,12 +2,16 @@
 
 set -e -x
 
+# Copy router config
+# ./scripts/diffconfig.sh .config
+# cp /home/me/openwrt/owrt-configs/${ROUTER_CONFIG}.config /home/me/openwrt/.config
+
 # Install custom feed
 cat /home/me/openwrt/feeds.conf.default > /home/me/openwrt/feeds.conf
 cat /home/me/openwrt/owrt-packages/packages.feed >> /home/me/openwrt/feeds.conf
 
 # Copy configuration files
-cp /home/me/openwrt/router.config /home/me/openwrt/.config
+# cp /home/me/openwrt/router.config /home/me/openwrt/.config
 
 # Update feeds
 ./scripts/feeds clean
@@ -19,4 +23,4 @@ cp /home/me/openwrt/router.config /home/me/openwrt/.config
 make defconfig
 
 # Add other package compilation instructions below
-# make -j$(nproc) package/compile
+make -j$(nproc)
