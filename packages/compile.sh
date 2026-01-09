@@ -2,17 +2,21 @@
 
 set -e -x
 
+# Install custom feed
+cat /home/me/openwrt/feeds.conf.default > /home/me/openwrt/feeds.conf
+cat /home/me/openwrt/owrt-packages/packages.feed >> /home/me/openwrt/feeds.conf
+
 # Copy configuration files
 cp /home/me/openwrt/router.config /home/me/openwrt/.config
-cat /home/me/openwrt/owrt-packages/packages.config >> /home/me/openwrt/.config
-cat /home/me/openwrt/owrt-packages/packages.feed >> /home/me/openwrt/feeds.conf.default
 
 # Update feeds
-./scripts/feeds update custom
-./scripts/feeds install -a -p custom
+./scripts/feeds clean
+./scripts/feeds update -a
+./scripts/feeds uninstall -a
+./scripts/feeds install bzip2
+./scripts/feeds install -a -p custom -d m
 
-# Update config based on config diffs
 make defconfig
 
 # Add other package compilation instructions below
-make -j$(nproc) V=s package/cups/compile
+# make -j$(nproc) package/compile

@@ -1,0 +1,38 @@
+name: Build and publish OpenWRT SDK image
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  push:
+    tags:
+      - openwrt-sdk-*
+  workflow_dispatch: {}
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    strategy:
+      matrix:
+        openwrt_version:
+          - "24.10.4"
+        openwrt_arch:
+          - "mediatek-filogic_gcc-13.3.0_musl.Linux-x86_64"
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build OpenWRT
+        run: |
+          docker build -f Dockerfile.sdk --build-arg OPENWRT_VERSION="${{ matrix.openwrt_version }}" --build-arg OPENWRT_ARCH="${{ matrix.openwrt_arch }}" -t "ghcr.io/${{ github.repository_owner }}/openwrt-sdk:${{ matrix.openwrt_version }}-${{ matrix.openwrt_arch }}" .
+
+      - name: Login to GitHub Packages
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Push Docker Image
+        run: |
+          docker push "ghcr.io/${{ github.repository_owner }}/openwrt-sdk:${{ matrix.openwrt_version }}-${{ matrix.openwrt_arch }}" 
